@@ -30,8 +30,8 @@ class LazySegmentTree {
         }
         int m = (l+r) >> 1;
         push(id);
-        if (p <= m) modify(id << 1,     l, m, p, v);
-        else        modify(id << 1 | 1, m, r, p, v);
+        if (p < m) modify(id << 1,     l, m, p, v);
+        else       modify(id << 1 | 1, m, r, p, v);
         pull(id);
     }
     Info rangeQuery(int id, int l, int r, int ql, int qr) {
