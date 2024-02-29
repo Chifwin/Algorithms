@@ -104,7 +104,7 @@ public:
         else { tree.resize(2); tree.reserve(4*q+10); }
     }
     template <typename T>
-    LazySegmentTree(const vector<T>& init, [[maybe_unused]] ll q=0) : LazySegmentTree((int)init.size(), q) {
+    LazySegmentTree(const vector<T>& init, ll q=0) : LazySegmentTree((int)init.size(), q) {
         function<void(int, int, int)> build = [&](int id, int l, int r){
             if (r == l) {
                 tree[id].info = init[l];
@@ -115,7 +115,7 @@ public:
             build(rson(id), m + 1, r);
             pull(id);
         };
-        if constexpr(type == 0) build(1, 0, n - 1);
+        build(1, 0, n - 1);
     }
     int modify(int p, const Info &v, int ver=1) {
         return modify((type == 2 ? ver : 1), 0, n - 1, p, v);
@@ -130,7 +130,7 @@ public:
     struct Tag{ Tag() {} };
     struct Info{
         Info() {}
-        void merge(Tag r, int len){}
+        void merge(Tag r, [[maybe_unused]] int len){}
     };
     Info operator+(Info l, Info r){ rt l; }
     Tag& operator+=(Tag &l, Tag r) { rt l; }
