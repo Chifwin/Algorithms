@@ -4,15 +4,19 @@
     Segment tree with lazy propagation, can be also implicit and persistent version.
     Info store information in node, Tag it's update.
     Both must have identity element as result of empty constructor.
+    Second constructor argument is for implicit and persistent versions to reserve 
+        nodes, should be around 20*number_of_queries.
     Examples: 
         Lazy propagation: https://codeforces.com/contest/258/submission/248993052
+                          https://codeforces.com/contest/718/submission/249037011
         Implicit:         https://codeforces.com/contest/12/submission/248999849
+        Persistent:       https://codeforces.com/contest/500/submission/249040072
 */
 
 template<class Info, class Tag, int type=0>
 class LazySegmentTree {
     // type == 0 -> only lazy propagation; type == 1 -> implicit; type == 2 -> persistent
-    template<int typ, bool dummy=true> struct InfoTag_t{
+    template<int typ, bool dummy> struct InfoTag_t{
         Info info;
         Tag tag;
         int l=-1, r=-1;
@@ -25,22 +29,22 @@ class LazySegmentTree {
     int n;
     vector<InfoTag> tree;
     inline int new_node(InfoTag node=InfoTag()){ tree.push_back(node); return tree.size()-1; }
-    inline int lson(int v){
+    inline int lson(int v, bool create=true){
         if constexpr(type != 0){
-            if (tree[v].l == -1) tree[v].l = new_node();
+            if (tree[v].l == -1 && create) tree[v].l = new_node();
             return tree[v].l; 
         }
         return v << 1;
     }
-    inline int rson(int v){
+    inline int rson(int v, bool create=true){
         if constexpr(type != 0){
-            if (tree[v].r == -1) tree[v].r = new_node();
+            if (tree[v].r == -1 && create) tree[v].r = new_node();
             return tree[v].r; 
         }
         return v << 1 | 1;
     }
     void pull(int id) {
-        int l = lson(id), r = rson(id);
+        int l = lson(id, false), r = rson(id, false);
         tree[id].info = (l == -1 ? Info() : tree[l].info) + (r == -1 ? Info() : tree[r].info);
     }
     void apply(int id, const Tag &v, int len) {
@@ -50,6 +54,7 @@ class LazySegmentTree {
     void push(int id, int l, int r) {
         int m = (l + r) >> 1;
         Tag t = tree[id].tag;
+        if constexpr (type != 0) if (t.empty()) rt;
         apply(lson(id), t, m - l + 1);
         apply(rson(id), t, r - m);
         tree[id].tag = Tag();
@@ -79,7 +84,7 @@ class LazySegmentTree {
         if (ql <= l && r <= qr) return tree[id].info;
         int m = (l + r) >> 1;
         push(id, l, r);
-        return rangeQuery(lson(id), l, m, ql, qr) + rangeQuery(rson(id), m + 1, r, ql, qr);
+        return rangeQuery(lson(id, false), l, m, ql, qr) + rangeQuery(rson(id, false), m + 1, r, ql, qr);
     }
     int rangeApply(int id, int l, int r, int ql, int qr, const Tag &v) {
         int new_root = id;
@@ -101,7 +106,7 @@ class LazySegmentTree {
 public:
     LazySegmentTree(int _n, [[maybe_unused]] ll q=0): n(_n) {
         if constexpr(type == 0) tree.resize(4*n);
-        else { tree.resize(2); tree.reserve(4*q+10); }
+        else { tree.resize(2); tree.reserve(q+10); }
     }
     template <typename T>
     LazySegmentTree(const vector<T>& init, ll q=0) : LazySegmentTree((int)init.size(), q) {
@@ -127,7 +132,10 @@ public:
         return rangeQuery((type == 2 ? ver : 1), 0, n - 1, ql, qr);
     }
     /*
-    struct Tag{ Tag() {} };
+    struct Tag{
+        Tag() {}
+        bool empty(){ rt false; }
+    };
     struct Info{
         Info() {}
         void merge(Tag r, [[maybe_unused]] int len){}
