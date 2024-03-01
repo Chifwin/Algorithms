@@ -54,7 +54,7 @@ class LazySegmentTree {
     void push(int id, int l, int r) {
         int m = (l + r) >> 1;
         Tag t = tree[id].tag;
-        if constexpr (type != 0) if (t.empty()) rt;
+        if constexpr (type != 0) if (t.empty()) return;
         apply(lson(id), t, m - l + 1);
         apply(rson(id), t, r - m);
         tree[id].tag = Tag();
@@ -104,12 +104,12 @@ class LazySegmentTree {
         return new_root;
     }
 public:
-    LazySegmentTree(int _n, [[maybe_unused]] ll q=0): n(_n) {
+    LazySegmentTree(int _n, [[maybe_unused]] int q=0): n(_n) {
         if constexpr(type == 0) tree.resize(4*n);
         else { tree.resize(2); tree.reserve(q+10); }
     }
     template <typename T>
-    LazySegmentTree(const vector<T>& init, ll q=0) : LazySegmentTree((int)init.size(), q) {
+    LazySegmentTree(const vector<T>& init, int q=0) : LazySegmentTree((int)init.size(), q) {
         function<void(int, int, int)> build = [&](int id, int l, int r){
             if (r == l) {
                 tree[id].info = init[l];
@@ -134,13 +134,13 @@ public:
     /*
     struct Tag{
         Tag() {}
-        bool empty(){ rt false; }
+        bool empty(){ return false; }
     };
     struct Info{
         Info() {}
         void merge(Tag r, [[maybe_unused]] int len){}
     };
-    Info operator+(Info l, Info r){ rt l; }
-    Tag& operator+=(Tag &l, Tag r) { rt l; }
+    Info operator+(Info l, Info r){ return l; }
+    Tag& operator+=(Tag &l, Tag r) { return l; }
     */
 };
