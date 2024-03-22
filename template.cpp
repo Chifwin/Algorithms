@@ -58,10 +58,10 @@ template<class T> using min_pq = priority_queue<T, vector<T>, greater<T>>;
 const ll MAXN = 2123456;
 const ll MOD = 1000'000'007;
 const ld EPS = 1e-10;
-const ll INF = (ll)(1ll<<60) + (ll)((1ll<<31)-1);
+const ll INF = (ll)(1ll<<60) + (ll)((1ll<<30)-1);
 const ld PI = atanl(1)*4;
 
-ll rll(ll r=LLONG_MAX, ll l=0){ /*random long long*/ static mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); return uniform_int_distribution<ll>(l, r)(rng); }
+ll rll(ll r=numeric_limits<ll>::max(), ll l=0){ /*random long long*/ static mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); return uniform_int_distribution<ll>(l, r)(rng); }
 template<typename F> auto time_measure(F f){ auto start = chrono::steady_clock::now(); f(); auto end = chrono::steady_clock::now(); return std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); }
 array<ll, 3> extgcd(ll a, ll b) { if (!b) return {a, 1, 0}; auto [d, y, x] = extgcd(b, a % b); return {d, x, y - a/b * x}; } // {gcd, x, y} such that a*x + b*y = gcd(a, b)
 ll gcd(ll x, ll y){ return __gcd(x, y); }
@@ -69,8 +69,8 @@ ll binpow(ll x, ll p, ll mod){ if (p < 0) return 0; x %= mod; ll ans = 1; while(
 ll invmod(ll x, ll mod=MOD){ return binpow(x, mod-2, mod); }
 ll sign(ll x){ if (x < 0) rt -1; rt !!x; }
 void FREOPEN(string s){ freopen(string(s + ".in").c_str(), "r", stdin); freopen(string(s + ".out").c_str(), "w", stdout); }
-template<class T, class TT> void mineq(T& a, const TT& b){ if (b < a) a = b;}
-template<class T, class TT> void maxeq(T& a, const TT& b){ if (b > a) a = b;}
+template<class T, class TT> bool mineq(T& a, const TT& b){ if (b < a) {a = b; return true;} return false;}
+template<class T, class TT> bool maxeq(T& a, const TT& b){ if (b > a) {a = b; return true;} return false;}
 const pll dxy[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 const pll dxy8[8] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
