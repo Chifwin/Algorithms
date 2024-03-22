@@ -62,6 +62,7 @@ const ll INF = (ll)(1ll<<60) + (ll)((1ll<<31)-1);
 const ld PI = atanl(1)*4;
 
 ll rll(ll r=LLONG_MAX, ll l=0){ /*random long long*/ static mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); return uniform_int_distribution<ll>(l, r)(rng); }
+template<typename F> auto time_measure(F f){ auto start = chrono::steady_clock::now(); f(); auto end = chrono::steady_clock::now(); return std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); }
 array<ll, 3> extgcd(ll a, ll b) { if (!b) return {a, 1, 0}; auto [d, y, x] = extgcd(b, a % b); return {d, x, y - a/b * x}; } // {gcd, x, y} such that a*x + b*y = gcd(a, b)
 ll gcd(ll x, ll y){ return __gcd(x, y); }
 ll binpow(ll x, ll p, ll mod){ if (p < 0) return 0; x %= mod; ll ans = 1; while(p){ if (p&1) ans = (ans*x)%mod; x = (x*x)%mod; p >>= 1; } return ans; }
