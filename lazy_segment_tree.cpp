@@ -29,14 +29,14 @@ class LazySegmentTree {
     int n;
     vector<InfoTag> tree;
     inline int new_node(InfoTag node=InfoTag()){ tree.push_back(node); return tree.size()-1; }
-    inline int lson(int v, bool create=true){
+    inline int lson(int v, [[maybe_unused]] bool create=true){
         if constexpr(type != 0){
             if (tree[v].l == -1 && create) tree[v].l = new_node();
             return tree[v].l; 
         }
         return v << 1;
     }
-    inline int rson(int v, bool create=true){
+    inline int rson(int v, [[maybe_unused]] bool create=true){
         if constexpr(type != 0){
             if (tree[v].r == -1 && create) tree[v].r = new_node();
             return tree[v].r; 
