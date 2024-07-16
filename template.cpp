@@ -43,7 +43,7 @@ template <typename Iter, typename=decltype(declval<Iter>().begin()), typename=en
 template<typename T> void dbg_vals(T x){ cerr<< "\033[31m" << x << "\033[0m"; }
 template<typename T, typename... Args> void dbg_vals(T x, Args... args){ dbg_vals(x); cerr << " | "; dbg_vals(args...); }
 
-struct custom_hash { static uint64_t splitmix64(uint64_t x) {/*http://xorshift.di.unimi.it/splitmix64.c*/ x += 0x9e3779b97f4a7c15; x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9; x = (x ^ (x >> 27)) * 0x94d049bb133111eb; return x ^ (x >> 31);} size_t operator()(uint64_t x) const { static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();return splitmix64(x + FIXED_RANDOM);}};
+struct custom_hash { static uint64_t splitmix64(uint64_t x) {/*http://xorshift.di.unimi.it/splitmix64.c*/ x+=0x9e3779b97f4a7c15;x=(x^(x>>30))*0xbf58476d1ce4e5b9;x=(x^(x>>27))*0x94d049bb133111eb; return x^(x>>31);}size_t operator()(uint64_t x)const{static const uint64_t FIXED_RANDOM=chrono::steady_clock::now().time_since_epoch().count();return splitmix64(x+FIXED_RANDOM);}};
 template<class T> using ll_umap = unordered_map<long long, T, custom_hash>;
 using ll_uset = unordered_set<long long, custom_hash>;
 template<class T> using fastll_umap = __gnu_pbds::gp_hash_table<long long, T, custom_hash>;
@@ -58,7 +58,7 @@ const ld PI = atanl(1)*4;
 
 template<typename T> inline ll sz(const T& x){ return x.size(); }
 void YESNO(bool flag) {cout<<(flag ? "YES" : "NO") <<'\n';}
-ll rll(ll r=numeric_limits<ll>::max(), ll l=0){ /*random long long*/ static mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); return uniform_int_distribution<ll>(l, r)(rng); }
+template<typename=enable_if_t<is_integral_v<ll>>> ll rll(ll r=numeric_limits<ll>::max(), ll l=0){ /*random long long*/ static mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); return uniform_int_distribution<ll>(l, r)(rng); }
 template<typename F> auto time_measure(F f){ auto start = chrono::steady_clock::now(); f(); auto end = chrono::steady_clock::now(); return std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); }
 array<ll, 3> extgcd(ll a, ll b) { if (!b) return {a, 1, 0}; auto [d, y, x] = extgcd(b, a % b); return {d, x, y - a/b * x}; } // {gcd, x, y} such that a*x + b*y = gcd(a, b)
 ll gcd(ll x, ll y){ return __gcd(x, y); }
