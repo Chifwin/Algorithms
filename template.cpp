@@ -8,7 +8,7 @@ using namespace std;
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 template<class T, class comp=less<T>> using ordered_set = __gnu_pbds::tree<T, __gnu_pbds::null_type, comp, __gnu_pbds::rb_tree_tag, __gnu_pbds::tree_order_statistics_node_update>;
-// find_by_order(k) - iterator on k's elements
+// find_by_order(k) - iterator on k'th element
 // order_of_key(x) - number of elements, strictly less than x
 
 using ll = long long;
