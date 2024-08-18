@@ -36,7 +36,7 @@ struct HLD{
         function<void(int)> hld = [&](int x){
             tin[x] = t++;
             for(auto i : gr[x]){
-                if (i == p[x]) cn;
+                if (i == p[x]) continue;
                 head[i] = (i == gr[x][0] ? head[x] : i);
                 hld(i);
             }
