@@ -62,3 +62,21 @@ public:
     }
     void set_clear(){ t[0].info = Info(); } // doesn't clear keys
 };
+
+
+class DSU{
+    vector<int> par;
+public:
+    DSU(int n): par(n, -1) { }
+    int find(int x){ return par[x] < 0 ? x : par[x] = find(par[x]); }
+    bool merge(int a, int b){
+        if ((a = find(a)) == (b = find(b))) return false;
+        if (par[a] < par[b]) swap(a, b);
+        return par[par[a] = b] += par[a], true;
+    }
+    int count(){
+        for(int i = 0; i < (int)par.size(); i++) find(i);
+        return std::count_if(all(par), [&](ll x){ return x < 0; });
+    }
+    int size(int x){ return -par[find(x)]; }
+};
