@@ -79,11 +79,6 @@ void solve(){
 
 int main(){
     ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
-    ll _ = 1;
-    cin >> _;
-    while(_--) {
-        // static ll CASE = 1; cout << "Case #" << CASE++ << ": ";
-        solve();
-    }
+    for (auto _ : views::iota(0, [](int x){ if constexpr (0) cin >> x; return x; }(1))) solve();
     return 0;
 }
