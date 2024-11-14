@@ -23,11 +23,11 @@ vector<pair<int,int>> matching_bipartite(vll gr[], int n){
         }
     }
     for(int i = 0; i < n; i++) if (is_l[i]) match[i] = 0;
-    function<bool(int)> kuhn = [&](int x) -> bool {
+    auto kuhn = [&](auto && self, int x) -> bool {
         for(int &i = ptr[x]; i < int(gr[x].size()); i++){
             if (is_l[gr[x][i]]) continue;
             int &u = match[gr[x][i]];
-            if (u == -1 || (dist[u] == dist[x] + 1 && kuhn(u))) return (match[u = x] = true);
+            if (u == -1 || (dist[u] == dist[x] + 1 && self(self, u))) return (match[u = x] = true);
         }
         return false;
     };
@@ -44,7 +44,7 @@ vector<pair<int,int>> matching_bipartite(vll gr[], int n){
         }
         if (!flag) break;
         fill(ptr.begin(), ptr.end(), 0);
-        for(int i = 0; i < n; i++) if (is_l[i] && !match[i]) kuhn(i);
+        for(int i = 0; i < n; i++) if (is_l[i] && !match[i]) kuhn(kuhn, i);
     }
     vector<pair<int, int>> ans;
     for(int i = 0; i < n; i++) if (!is_l[i] && match[i] != -1) ans.emplace_back(match[i], i);

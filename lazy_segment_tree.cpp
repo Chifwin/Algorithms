@@ -110,17 +110,17 @@ public:
     }
     template <typename T>
     LazySegmentTree(const vector<T>& init, ll q=0) : LazySegmentTree((ll)init.size(), q) {
-        function<void(ll, ll, ll)> build = [&](int id, ll l, ll r){
+        auto build = [&](auto && self, int id, ll l, ll r){
             if (r == l) {
                 tree[id].info = init[l];
                 return;
             }
             ll m = (l + r) >> 1;
-            build(lson(id), l, m);
-            build(rson(id), m + 1, r);
+            self(self, lson(id), l, m);
+            self(self, rson(id), m + 1, r);
             pull(id);
         };
-        build(1, 0, n - 1);
+        build(build, 1, 0, n - 1);
     }
     int modify(ll p, const Info &v, int ver=1) {
         return modify((type == 2 ? ver : 1), 0, n - 1, p, v);

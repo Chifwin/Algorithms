@@ -23,27 +23,27 @@ struct HLD{
     int s[MAXN], p[MAXN], tin[MAXN], tout[MAXN], head[MAXN], levs[MAXN], t;
     bool upper(int a, int b){ return tin[a] <= tin[b] && tin[b] < tout[a]; }
     HLD(vector<ll> gr[]){
-        function<void(int, int, int)> sizes = [&](int x, int par, int lev){
+        auto sizes = [&](auto &&self, int x, int par, int lev) -> void{
             s[x] = 1, p[x] = par, levs[x] = lev;
             if (gr[x].size() && gr[x][0] == par) swap(gr[x][0], gr[x].back());
             for(auto& i : gr[x]){
                 if (i == par) continue;
-                sizes(i, x, lev+1);
+                self(self, i, x, lev+1);
                 s[x] += s[i];
                 if (s[i] > s[gr[x][0]]) swap(i, gr[x][0]); 
             }
-        }; sizes(0, 0, 0);
-        function<void(int)> hld = [&](int x){
+        }; sizes(sizes, 0, 0, 0);
+        auto hld = [&](auto &&self, int x) -> void{
             tin[x] = t++;
             for(auto i : gr[x]){
                 if (i == p[x]) continue;
                 head[i] = (i == gr[x][0] ? head[x] : i);
-                hld(i);
+                self(self, i);
             }
             tout[x] = t;
-        }; t = 0; hld(0);
+        }; t = 0; hld(hld, 0);
     }
-    int do_path(int a, int b, function<void(int, int)> f){
+    int do_path(int a, int b, function<void(int, int)>&& f){
         for(; head[a] != head[b]; b = p[head[b]]){
             if (levs[head[a]] > levs[head[b]]) swap(a, b);
             f(tin[head[b]], tin[b]);
@@ -52,7 +52,7 @@ struct HLD{
         f(tin[a], tin[b]);
         return a;
     }
-    void do_subtree(int v, function<void(int, int)> f){ f(tin[v], tout[v]-1); }
+    void do_subtree(int v, function<void(int, int)>&& f){ f(tin[v], tout[v]-1); }
     int lca(int a, int b){ return do_path(a, b, []([[maybe_unused]]int a,[[maybe_unused]] int b){});}
     int dist(int a, int b){ return levs[a] + levs[b] - 2*levs[lca(a, b)]; }
 };
@@ -86,12 +86,12 @@ struct Calc_LCA{
     const static int LOG = 20;
     int tin[MAXN], tout[MAXN], levs[MAXN], up[MAXN][LOG], t;
     void calc(const vector<ll> gr[]){ 
-        function<void(int, int, int)> dfs = [&](int x, int p, int lev){
+        auto dfs = [&](auto &&self, int x, int p, int lev) -> void{
             levs[x] = ++lev, tin[x] = ++t, up[x][0] = p;
             for(int i = 1; i < LOG; i++) up[x][i] = up[up[x][i-1]][i-1];
-            for(int i : gr[x]) if (i != p) dfs(i, x, lev);
+            for(int i : gr[x]) if (i != p) self(self, i, x, lev);
             tout[x] = ++t;
-        }; t = 0; dfs(0, 0, 0); 
+        }; t = 0; dfs(dfs, 0, 0, 0);
     }
     bool upper(int a, int b){ return tin[a] <= tin[b] && tout[a] >= tout[b]; }
     int lca(int a, int b){

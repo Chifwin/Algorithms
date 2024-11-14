@@ -16,7 +16,7 @@ class LiChaoTree{
     vector<Line> lines;
     int new_line(){ lines.push_back(Line()); return lines.size()-1; }
     int son(int root, int s){ return lines[root].sons[s] = (lines[root].sons[s] == -1 ? new_line() : lines[root].sons[s]); }
-    void swap_lines(Line& a, Line& b){ // necessary as left/righ must stay same
+    void swap_lines(Line& a, Line& b){ // necessary as left/right must stay same
         swap(a.b, b.b), swap(a.k, b.k);
     }
     void add_line(int cur, ll l, ll r, Line newl){

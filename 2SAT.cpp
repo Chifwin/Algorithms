@@ -14,10 +14,10 @@ public:
         int timer = 0, n = gr.size()/2;
         vals.assign(n, -1);
         vector<int> tout(2*n, 0), st, comps(2*n, 0);
-        function<int(int)> dfs = [&](int x) -> int {
+        auto dfs = [&](auto &&self, int x) -> int {
             int low = tout[x] = ++timer, v;
             st.push_back(x);
-            for(int v : gr[x]) if (!comps[v]) low = min(low, tout[v] ? tout[v] : dfs(v));
+            for(int v : gr[x]) if (!comps[v]) low = min(low, tout[v] ? tout[v] : self(self, v));
             if (low == tout[x]) do{
                     v = st.back(); st.pop_back();
                     comps[v] = low;
@@ -25,7 +25,7 @@ public:
                 } while(v != x);
             return tout[x] = low;
         };
-        for(int i = 0; i < 2*n; i++) if (!comps[i]) dfs(i);
+        for(int i = 0; i < 2*n; i++) if (!comps[i]) dfs(dfs, i);
         for(int i = 0; i < n; i++) if (comps[2*i] == comps[2*i+1]) return false;
         return true;
     }
