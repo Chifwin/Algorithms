@@ -79,6 +79,8 @@ void solve(){
 
 int main(){
     ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
-    for (auto _ : views::iota(0, [](int x){ if constexpr (0) cin >> x; return x; }(1))) solve();
+    ll t = 1;
+    cin >> t;
+    while(t--) solve();
     return 0;
 }
