@@ -37,6 +37,8 @@ using pll = pair<ll,ll>;
 
 template<class T> istream& operator>>(istream& in, vector<T>& x){for(T& i : x) in >> i; return in; }
 template<class T, class TT> istream& operator>>(istream& in, pair<T, TT>& x){ in >> x.f >> x.s; return in; }
+
+template <typename Iter, typename, typename> ostream& operator<<(ostream& out, const Iter& x);
 template<class T, class TT> ostream& operator<<(ostream& out, const pair<T, TT>& x){ out << x.f << ' ' << x.s; return out; }
 template <typename Iter, typename=decltype(declval<Iter>().begin()), typename=enable_if_t<!is_convertible_v<Iter, string>>> ostream& operator<<(ostream& out, const Iter& x){ for (const auto& i : x) out << i << ' '; return out;}
 
@@ -56,16 +58,15 @@ const ld EPS = 1e-10;
 const ll INF = numeric_limits<ll>::max() >> 2;
 const ld PI = atanl(1)*4;
 
+static mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+template<typename=enable_if_t<is_integral_v<ll>>> ll rll(ll r=numeric_limits<ll>::max(), ll l=0){ /*random long long*/  return uniform_int_distribution<ll>(l, r)(rng); }
 template<typename T> inline ll sz(const T& x){ return x.size(); }
 void YESNO(bool flag) {cout<<(flag ? "YES" : "NO") <<'\n';}
-template<typename=enable_if_t<is_integral_v<ll>>> ll rll(ll r=numeric_limits<ll>::max(), ll l=0){ /*random long long*/ static mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count()); return uniform_int_distribution<ll>(l, r)(rng); }
 template<typename F> auto time_measure(F f){ auto start = chrono::steady_clock::now(); f(); auto end = chrono::steady_clock::now(); return std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); }
 array<ll, 3> extgcd(ll a, ll b) { if (!b) return {a, 1, 0}; auto [d, y, x] = extgcd(b, a % b); return {d, x, y - a/b * x}; } // {gcd, x, y} such that a*x + b*y = gcd(a, b)
 ll gcd(ll x, ll y){ return __gcd(x, y); }
 ll binpow(ll x, ll p, ll mod){ if (p < 0) return 0; x %= mod; ll ans = 1; while(p){ if (p&1) ans = (ans*x)%mod; x = (x*x)%mod; p >>= 1; } return ans; }
 ll invmod(ll x, ll mod=MOD){ return binpow(x, mod-2, mod); }
-ll sign(ll x){ return (x < 0 ? -1 : !!x); }
-void FREOPEN(string s){ freopen(string(s + ".in").c_str(), "r", stdin); freopen(string(s + ".out").c_str(), "w", stdout); }
 template<class T, class TT> bool mineq(T& a, const TT& b){ if (b < a) {a = b; return true;} return false;}
 template<class T, class TT> bool maxeq(T& a, const TT& b){ if (b > a) {a = b; return true;} return false;}
 const pll dxy[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
