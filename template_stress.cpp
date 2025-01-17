@@ -4,15 +4,18 @@
 using namespace std;
 
 template<typename Cin, typename Cout>
-void solve(Cin& cin, Cout& cout){
+void naive(Cin& cin, Cout& cout){
 }
 template<typename Cin, typename Cout>
-void naive(Cin& cin, Cout& cout){
+void solve(Cin& cin, Cout& cout){
 }
 const bool stress = true;
 int main(){
-    if (!stress) solve(cin, cout);
-    else{
+    if (!stress){
+        int t = 1;
+        cin >> t;
+        while(t--) solve(cin, cout);
+    }else{
         while(1){
             stringstream cin_solve, cout_solve, cout_naive;
             { // gen input
