@@ -75,8 +75,7 @@ public:
         return par[par[a] = b] += par[a], true;
     }
     int count(){
-        for(int i = 0; i < (int)par.size(); i++) find(i);
-        return std::count_if(all(par), [&](ll x){ return x < 0; });
+        return std::count_if(all(par), [&](int x){ return x < 0; });
     }
     int size(int x){ return -par[find(x)]; }
 };
