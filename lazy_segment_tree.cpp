@@ -144,3 +144,23 @@ public:
     Tag& operator+=(Tag &l, Tag r) { return l; }
     */
 };
+
+
+/*
+    Adapter for Bottom-Up Segment Tree from Atcoder library:
+    https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
+    Note that Info::merge(Tag, len) get always incorrect len.
+    Tested on PTZ Winter 2025 task (I3)
+*/
+
+template<class Info, class Tag>
+class FastLazySegmentTree{
+    lazy_segtree<Info, [](Info a, Info b){return a + b;}, [](){return Info();}, Tag, [](Tag a, Info b){ b.merge(a, -1); return b;}, [](Tag a, Tag b){return a += b;}, [](){return Tag();}> seg;
+public:
+    FastLazySegmentTree(ll _n): seg(_n) {}
+    template <typename T>
+    FastLazySegmentTree(const vector<T>& init) : seg(vector<Info>(init.begin(), init.end())) {}
+    void modify(ll p, const Info& v){ seg.set(p, v); }
+    void rangeApply(ll ql, ll qr, const Tag& v){ seg.apply(ql, qr+1, v); }
+    Info rangeQuery(ll ql, ll qr){ return seg.prod(ql, qr+1); }
+};
