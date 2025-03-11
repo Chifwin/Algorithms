@@ -3,8 +3,8 @@
 /*
     HLD:
         Create Heavy-Light decomposition and provide support functions for convenient use of the decomposition
-        Also may be used for LCA finding with O(N) memory but bigger constant:
-            https://judge.yosupo.jp/submission/198438
+        Also may be used for LCA finding with O(N) memory with almost same constant as binary lifting
+            https://judge.yosupo.jp/submission/272736
 
     HLDSegTree:
         Specialization of HLD for Lazy Segment Tree
@@ -12,7 +12,7 @@
         Support path query/update with additional O(log(N)) to segment tree time complexity
 
         Example with all types of queries:
-            https://codeforces.com/group/NOwIbqv33y/contest/307219/submission/252684653
+            https://codeforces.com/group/NOwIbqv33y/contest/307219/submission/310013414
     LCA:
         Calculate lca in O(log(N)) time and O(N*log(N)) memory using binary lifting
         https://judge.yosupo.jp/submission/198437
@@ -20,9 +20,11 @@
 */
 
 struct HLD{
-    int s[MAXN], p[MAXN], tin[MAXN], tout[MAXN], head[MAXN], levs[MAXN], t;
+    int t;
+    vector<int> s, p, tin, tout, head, levs;
     bool upper(int a, int b){ return tin[a] <= tin[b] && tin[b] < tout[a]; }
-    HLD(vector<ll> gr[]){
+    HLD(){}
+    HLD(vector<ll> gr[], ll n): t(0), s(n), p(n), tin(n), tout(n), head(n), levs(n) {
         auto sizes = [&](auto &&self, int x, int par, int lev) -> void{
             s[x] = 1, p[x] = par, levs[x] = lev;
             if (gr[x].size() && gr[x][0] == par) swap(gr[x][0], gr[x].back());
@@ -43,7 +45,8 @@ struct HLD{
             tout[x] = t;
         }; t = 0; hld(hld, 0);
     }
-    int do_path(int a, int b, function<void(int, int)>&& f){
+    template<class F>
+    int do_path(int a, int b, F f){
         for(; head[a] != head[b]; b = p[head[b]]){
             if (levs[head[a]] > levs[head[b]]) swap(a, b);
             f(tin[head[b]], tin[b]);
@@ -52,7 +55,8 @@ struct HLD{
         f(tin[a], tin[b]);
         return a;
     }
-    void do_subtree(int v, function<void(int, int)>&& f){ f(tin[v], tout[v]-1); }
+    template<class F>
+    void do_subtree(int v, F f){ f(tin[v], tout[v]-1); }
     int lca(int a, int b){ return do_path(a, b, []([[maybe_unused]]int a,[[maybe_unused]] int b){});}
     int dist(int a, int b){ return levs[a] + levs[b] - 2*levs[lca(a, b)]; }
 };
