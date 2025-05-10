@@ -5,31 +5,14 @@
             "type": "process",
             "label": "Compile&Run",
             "command": [
-                "C:/Programs/gcc14-64-msys2/mingw64/bin/g++.exe"
+                "cmd.exe",
             ],
             "args": [
-                "${file}",
-                "-o",
-                "${fileBasenameNoExtension}.exe",
-                // "-std=gnu++23",
-                "-std=gnu++17",
-                "-Wall",
-                "-Wextra",
-                "-pedantic",
-                "-O2",
-                "-Wformat=2",
-                "-Wfloat-equal",
-                "-Wlogical-op",
-                "-Wshift-overflow=2",
-                "-Wduplicated-cond",
-                "-Wcast-qual",
-                "-Wcast-align",
-                
-                "-D_GLIBCXX_DEBUG",
-                "-D_GLIBCXX_DEBUG_PEDANTIC",
-                "-D_FORTIFY_SOURCE=2",
-                "-fstack-protector",
-                "-Wl,--stack=134217728"
+                "/c g++.exe ${file} -o ${fileBasenameNoExtension}.exe -std=c++17 && ${fileBasenameNoExtension}.exe < in",
+                // "-O2",
+                // "-Wall", "-Wextra", "-pedantic",
+                // "-Wformat=2", "-Wfloat-equal", "-Wlogical-op", "-Wshift-overflow=2", "-Wduplicated-cond", "-Wcast-qual", "-Wcast-align", 
+                // "-D_GLIBCXX_DEBUG", "-D_GLIBCXX_DEBUG_PEDANTIC", "-D_FORTIFY_SOURCE=2", "-fstack-protector", "-Wl,--stack=134217728",
             ],
             "problemMatcher": [
                 "$gcc"
