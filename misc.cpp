@@ -8,6 +8,22 @@
             3) Add key-value pair to map in O(H)
         Examples:
             https://codeforces.com/contest/842/submission/277089370
+    DSU
+        Just short fast DSU
+    Vec
+        C-array with std::vector interface (mostly)
+    Assotiative containers over arrays, faster for small collections than std::map. Useful for Aho-Corasick
+        MapVector
+            std::vector wrapper with basic std::map interface
+        MapArray<V, size>
+            C-array wrapper with basic std::map<int, V> interface, when 0 <= keys < size
+    Comb:
+        Factorials and inverse factorials for O(1) C(n, k)
+    Interval_Map:
+        std::map wrapper with operations:
+            1) assign(l, r, val): set 'val' on array [l, r)
+                At most one O(log) operation + amortized O(1) // it was insanely hard
+            2) get value in point l in O(log)
 */
 
 template<int H, class Info, class bit_type=unsigned long long>
@@ -63,7 +79,6 @@ public:
     void set_clear(){ t[0].info = Info(); } // doesn't clear keys
 };
 
-
 class DSU{
     vector<int> par;
 public:
@@ -78,4 +93,151 @@ public:
         return std::count_if(all(par), [&](int x){ return x < 0; });
     }
     int size(int x){ return -par[find(x)]; }
+};
+
+template<class T, int len>
+class Vec{
+    T ar[len];
+    int s = 0;
+public:
+    void push_back(const T& x){ ar[s++] = x; }
+    void pop_back(){ s--; }
+    template<typename... Args> void emplace_back(Args... args){ ar[s++] = T(args...); }
+    void clear(){ s = 0; }
+    T* begin(){ return ar; }
+    T* end(){ return ar+s; }
+    const T* begin() const { return ar; }
+    const T* end() const { return ar+s; }
+    int size() const { return s; }
+    T& operator[](int i){ return ar[i]; }
+    void reserve(int x){ assert(x <= len); }
+};
+
+template<class K, class V>
+class MapVector{
+    vector<pair<K, V>> ar;
+    int find(K x){
+        for(int i = 0; i < (int)ar.size(); i++) if (ar[i].f == x) return i;
+        return -1;
+    }
+public:
+    V& operator[](K x){
+        int i = find(x);
+        if (i != -1) return ar[i].s;
+        ar.emplace_back(x, V());
+        return ar.back().s;
+    }
+    int count(int x){ return find(x) != -1; }
+    auto begin(){ return ar.begin(); }
+    auto end(){ return ar.end(); }
+    auto begin() const { return ar.cbegin(); }
+    auto end() const { return ar.cend(); }
+    void erase(K x){
+        int i = find(x);
+        if (i != -1) {
+            swap(ar[i], ar.back());
+            ar.pop_back();
+        }
+    }
+    int size(){ return ar.size(); }
+};
+
+template<class V, int N>
+class MapArray{
+    V ar[N];
+    struct Iter{
+        int ind;
+        const MapArray &par;
+        Iter operator++(){ do ind++; while(ind < N && par.ar[ind] == V()); return *this; }
+        pair<int, V> operator*(){ assert(ind >= 0 && ind < N && par.ar[ind] != V()); return {ind, par.ar[ind]}; }
+        friend bool operator!=(Iter l, Iter r) {return l.ind != r.ind; }
+    };
+public:
+    MapArray(){ fill(ar, ar+N, V()); }
+    V& operator[](int x){ return ar[x]; }
+    int count(int x){ return ar[x] != V(); }
+    const Iter begin() const { return ++Iter{-1, *this}; }
+    const Iter end() const { return Iter{N, *this}; }
+    void erase(int x){ ar[x] = V(); }
+    int size(){ return count_if(ar, ar+N, [&](V v){ return v != V(); }); }
+};
+
+template <class Node, int K=20>
+class Sparse{
+    Node vals[K][MAXN];
+    int log2_floor(int i) {
+        return i ? __builtin_clz(1) - __builtin_clz(i) : -1;
+    }
+public:
+    template<class T>
+    Sparse(const T ar, int n){
+        for(int i = 0; i < n; i++) vals[0][i] = Node(ar[i], i);
+        for(int i = 1; i < K; i++){
+            for(int j = 0; j + (1ll<<i) < n; j++){
+                vals[i][j] = vals[i-1][j] + vals[i-1][j + (1ll<<(i-1))];
+            }
+        }
+    }
+    Node get(int l, int r){
+        int i = log2_floor(r-l+1);
+        return vals[i][l] + vals[i][r-(1ll<<i)+1];
+    }
+};
+
+template<int maxn, int mod>
+struct Comb{
+    int fac[maxn]{1}, invfac[maxn];
+    Comb(){
+        for(ll i = 1; i < maxn; i++) fac[i] = fac[i-1] * i % mod;
+        invfac[maxn-1] = invmod(fac[maxn-1], mod);
+        for(ll i = maxn-1; i > 0; i--) invfac[i-1] = invfac[i] * i % mod;
+    }
+    inline ll C(ll n, ll k){
+        if (n < 0 || k > n || k < 0) return 0;
+        assert(n < maxn && k < maxn);
+        return (ll)fac[n] * invfac[k] % mod * invfac[n-k] % mod;
+    }
+	inline ll sab_non_empty(ll n, ll bins){ return C(n-1, bins-1);}
+	inline ll sab(ll n, ll bins){ return C(n+bins-1, bins-1);}
+}; Comb<MAXN, MOD> comb;
+
+template<typename K, typename V>
+class Interval_Map {
+	V m_valBegin;
+	std::map<K, V> m_map;
+public:
+	Interval_Map(V const& val) : m_valBegin(val) {}
+	void assign( K const& keyBegin, K const& keyEnd, V const& val ) { // [keyBegin, keyEnd)
+	    if (!(keyBegin < keyEnd)) return;
+        auto it = m_map.lower_bound(keyEnd);
+        if (it == m_map.end() || keyEnd < it->first){
+            // Add cut piece by right border
+            if (it == m_map.begin()){
+                if (!(val == m_valBegin)) it = m_map.emplace_hint(it, keyEnd, m_valBegin);
+            }else{
+                auto pit = std::prev(it);
+                if (!(val == pit->second)) {
+                    if (!(pit->first < keyBegin)){
+                        // Change start of the previous interval in amortized O(1) without reallocation
+                        auto node = m_map.extract(pit);
+                        node.key() = keyEnd;
+                        it = m_map.insert(it, std::move(node));
+                    }else it = m_map.emplace_hint(it, keyEnd, pit->second);
+                }
+            }
+        }
+        while(it != m_map.begin() && !((--it)->first < keyBegin)) it = m_map.erase(it);
+        if (it != m_map.end()){
+            if (it->first < keyBegin) it++;
+            if (it != m_map.end() && it->second == val) it = m_map.erase(it); 
+            if (it == m_map.begin()){
+                if (!(val == m_valBegin)) m_map.emplace_hint(it, keyBegin, val);
+            }else if (!(val == prev(it)->second)) m_map.emplace_hint(it, keyBegin, val);
+        }
+	}
+	V const& operator[]( K const& key ) const {
+		auto it = m_map.upper_bound(key);
+		if(it == m_map.begin()) return m_valBegin;
+        return (--it)->second;
+	}
 };
