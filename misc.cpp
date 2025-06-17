@@ -164,6 +164,7 @@ public:
 
 template <class Node, int K=20>
 class Sparse{
+    static_assert(MAXN < (1<<K));
     Node vals[K][MAXN];
     int log2_floor(int i) {
         return i ? __builtin_clz(1) - __builtin_clz(i) : -1;
@@ -173,7 +174,7 @@ public:
     Sparse(const T ar, int n){
         for(int i = 0; i < n; i++) vals[0][i] = Node(ar[i], i);
         for(int i = 1; i < K; i++){
-            for(int j = 0; j + (1ll<<i) < n; j++){
+            for(int j = 0; j + (1ll<<i) <= n; j++){
                 vals[i][j] = vals[i-1][j] + vals[i-1][j + (1ll<<(i-1))];
             }
         }
