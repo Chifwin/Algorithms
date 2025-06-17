@@ -6,8 +6,8 @@
         Can be ~10% faster with better vector/map container from /misc.
         Example:
             https://vjudge.net/solution/61227035
-            MapArray: https://vjudge.net/solution/61253308  921ms
-            std::map: https://vjudge.net/solution/61253180 1499ms
+            MapArray: https://vjudge.net/solution/61253308  921ms 273'600kB
+            std::map: https://vjudge.net/solution/61253180 1499ms 272'900kB
     
     Manacher:
         O(n) pre-calc and O(1) palindrome check
