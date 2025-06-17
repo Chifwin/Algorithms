@@ -6,6 +6,8 @@
         Can be ~10% faster with better vector/map container from /misc.
         Example:
             https://vjudge.net/solution/61227035
+            MapArray: https://vjudge.net/solution/61253308  921ms
+            std::map: https://vjudge.net/solution/61253180 1499ms
     
     Manacher:
         O(n) pre-calc and O(1) palindrome check
@@ -53,6 +55,13 @@ public:
     void print(int v=0, string s=""){
         dbg(v, s, t[v].sufflink)
         for(auto [c, nex] : t[v].next) print(nex, s + (char)c);
+    }
+    int next(int v, char c){
+        while(!t[v].next[c]){
+            if (!v) return v;
+            v = t[v].sufflink;
+        }
+        return t[v].next[c];
     }
 };
 
