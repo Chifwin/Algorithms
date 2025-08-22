@@ -27,13 +27,10 @@ struct Dinic {
     SQueue<MAXN> q;
     void init(int _n, int _s, int _t) {
         n = _n, s = _s, t = _t;
-        dbg(s, t)
         m = 0;
         fi(n) adj[i].clear();
-        fill(ptr, ptr+n, 0);
     }
     void add_edge(int v, int u, ll cap) {
-        dbg(v, u, cap)
         edges[m] = FlowEdge(v, u, cap);
         edges[m+1] = FlowEdge(u, v, 0);
         adj[v].push_back(m);
@@ -47,13 +44,13 @@ struct Dinic {
             q.pop();
             for (int id : adj[v]) {
                 if (edges[id].cap == edges[id].flow) continue;
-                if (level[edges[id].u] != -1) continue;
+                if (level[edges[id].u] >= level[s]) continue;
                 level[edges[id].u] = level[v] + 1;
                 q.push(edges[id].u);
             }
         }
         q.clear();
-        return level[t] != -1;
+        return level[t] >= level[s];
     }
     ll dfs(int v, ll pushed) {
         if (pushed == 0) return 0;
@@ -73,8 +70,7 @@ struct Dinic {
     ll flow() {
         ll f = 0;
         while (1) {
-            fill(level, level+n, -1);
-            level[s] = 0;
+            level[s] += 5;
             q.push(s);
             if (!bfs()) break;
             fill(ptr, ptr+n, 0);

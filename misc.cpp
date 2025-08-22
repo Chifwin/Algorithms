@@ -40,7 +40,7 @@ class BitTrie{
     inline bool empty_son(int id, int s){ return !t[id].sons[s] || is_empty(t[id].sons[s]); }
     inline void push_clear(int id){
         if (is_empty(id)){
-             for(ll i = 0; i < 2; i++) {
+             for(int i = 0; i < 2; i++) {
                 if (t[id].sons[i]) t[t[id].sons[i]].info = Info();
             }
         }
@@ -189,17 +189,17 @@ template<int maxn, int mod>
 struct Comb{
     int fac[maxn]{1}, invfac[maxn];
     Comb(){
-        for(ll i = 1; i < maxn; i++) fac[i] = fac[i-1] * i % mod;
+        for(long long i = 1; i < maxn; i++) fac[i] = fac[i-1] * i % mod;
         invfac[maxn-1] = invmod(fac[maxn-1], mod);
-        for(ll i = maxn-1; i > 0; i--) invfac[i-1] = invfac[i] * i % mod;
+        for(long long i = maxn-1; i > 0; i--) invfac[i-1] = invfac[i] * i % mod;
     }
-    inline ll C(ll n, ll k){
+    inline int C(int n, int k){
         if (n < 0 || k > n || k < 0) return 0;
         assert(n < maxn && k < maxn);
-        return (ll)fac[n] * invfac[k] % mod * invfac[n-k] % mod;
+        return (long long)fac[n] * invfac[k] % mod * invfac[n-k] % mod;
     }
-	inline ll sab_non_empty(ll n, ll bins){ return C(n-1, bins-1);}
-	inline ll sab(ll n, ll bins){ return C(n+bins-1, bins-1);}
+	inline int sab_non_empty(int n, int bins){ return C(n-1, bins-1);}
+	inline int sab(int n, int bins){ return C(n+bins-1, bins-1);}
 }; Comb<MAXN, MOD> comb;
 
 template<typename K, typename V>
