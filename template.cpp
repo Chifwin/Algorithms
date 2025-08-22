@@ -64,7 +64,7 @@ void YESNO(bool flag) {cout<<(flag ? "YES" : "NO") <<'\n';}
 template<typename F> auto time_measure(F f){ auto start = chrono::steady_clock::now(); f(); auto end = chrono::steady_clock::now(); return std::chrono::duration_cast<std::chrono::microseconds>(end - start).count(); }
 array<ll, 3> extgcd(ll a, ll b) { if (!b) return {a, 1, 0}; auto [d, y, x] = extgcd(b, a % b); return {d, x, y - a/b * x}; } // {gcd, x, y} such that a*x + b*y = gcd(a, b)
 ll gcd(ll x, ll y){ return __gcd(x, y); }
-ll binpow(ll x, ll p, ll mod){ if (p < 0) return 0; x %= mod; ll ans = 1; while(p){ if (p&1) ans = (ans*x)%mod; x = (x*x)%mod; p >>= 1; } return ans; }
+ll binpow(long long x, ll p, ll mod){ if (p < 0) return 0; x %= mod; long long ans = 1; while(p){ if (p&1) ans = (ans*x)%mod; x = (x*x)%mod; p >>= 1; } return ans; }
 ll invmod(ll x, ll mod=MOD){ return binpow(x, mod-2, mod); }
 template<class T, class TT> bool mineq(T& a, const TT& b){ if (b < a) {a = b; return true;} return false;}
 template<class T, class TT> bool maxeq(T& a, const TT& b){ if (b > a) {a = b; return true;} return false;}

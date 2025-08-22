@@ -193,13 +193,13 @@ struct Comb{
         invfac[maxn-1] = invmod(fac[maxn-1], mod);
         for(long long i = maxn-1; i > 0; i--) invfac[i-1] = invfac[i] * i % mod;
     }
-    inline int C(int n, int k){
+    inline long long C(int n, int k){
         if (n < 0 || k > n || k < 0) return 0;
         assert(n < maxn && k < maxn);
         return (long long)fac[n] * invfac[k] % mod * invfac[n-k] % mod;
     }
-	inline int sab_non_empty(int n, int bins){ return C(n-1, bins-1);}
-	inline int sab(int n, int bins){ return C(n+bins-1, bins-1);}
+	inline long long sab_non_empty(int n, int bins){ return C(n-1, bins-1);}
+	inline long long sab(int n, int bins){ return C(n+bins-1, bins-1);}
 }; Comb<MAXN, MOD> comb;
 
 template<typename K, typename V>
