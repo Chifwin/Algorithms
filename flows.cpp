@@ -70,7 +70,7 @@ struct Dinic {
     ll flow() {
         ll f = 0;
         while (1) {
-            level[s] += 5;
+            level[s] += n+5;
             q.push(s);
             if (!bfs()) break;
             fill(ptr, ptr+n, 0);
