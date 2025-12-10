@@ -33,7 +33,7 @@ using pll = pair<ll,ll>;
 #define pb push_back
 #define all(queries) begin(queries),end(queries)
 #define rall(queries) (queries).rbegin(),(queries).rend()
-#define dbg(...) {cerr << "\033[33m" << (#__VA_ARGS__) << ": "; dbg_vals(__VA_ARGS__); cerr << "\033[0m\n";}
+#define dbg(...) {auto t = std::make_tuple(__VA_ARGS__); cerr << "\033[33m" << (#__VA_ARGS__) << ": "; dbg_vals(t, make_index_sequence<tuple_size_v<decltype(t)>>{}); cerr << "\033[0m\n";}
 
 template<class T> istream& operator>>(istream& in, vector<T>& x){for(T& i : x) in >> i; return in; }
 template<class T, class TT> istream& operator>>(istream& in, pair<T, TT>& x){ in >> x.f >> x.s; return in; }
@@ -42,7 +42,7 @@ template <typename Iter, typename, typename> ostream& operator<<(ostream& out, c
 template<class T, class TT> ostream& operator<<(ostream& out, const pair<T, TT>& x){ out << x.f << ' ' << x.s; return out; }
 template <typename Iter, typename=decltype(declval<Iter>().begin()), typename=enable_if_t<!is_convertible_v<Iter, string>>> ostream& operator<<(ostream& out, const Iter& x){ for (const auto& i : x) out << i << ' '; return out;}
 
-template<typename... Args> void dbg_vals(Args... args){ auto sep=""; ((cerr<<sep<<"\033[31m"<<args<<"\033[0m", sep=" | "),...); }
+template<class Tuple, size_t... I> void dbg_vals(const Tuple& t, index_sequence<I...>){ auto sep=""; ((cerr<<sep<<"\033[31m"<<get<I>(t)<<"\033[0m", sep=" | "),...); }
 
 struct custom_hash { static uint64_t splitmix64(uint64_t x) {/*http://xorshift.di.unimi.it/splitmix64.c*/ x+=0x9e3779b97f4a7c15;x=(x^(x>>30))*0xbf58476d1ce4e5b9;x=(x^(x>>27))*0x94d049bb133111eb; return x^(x>>31);}size_t operator()(uint64_t x)const{static const uint64_t FIXED_RANDOM=chrono::steady_clock::now().time_since_epoch().count();return splitmix64(x+FIXED_RANDOM);}};
 template<class T> using ll_umap = unordered_map<long long, T, custom_hash>;
