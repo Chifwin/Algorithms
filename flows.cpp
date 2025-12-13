@@ -49,7 +49,6 @@ struct Dinic {
                 q.push(edges[id].u);
             }
         }
-        q.clear();
         return level[t] >= level[s];
     }
     ll dfs(int v, ll pushed) {
