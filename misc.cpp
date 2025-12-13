@@ -11,7 +11,7 @@
     DSU
         Just short fast DSU
     Vec
-        C-array with std::vector interface (mostly)
+        std::array with std::vector interface (mostly)
     Assotiative containers over arrays, faster for small collections than std::map. Useful for Aho-Corasick
         MapVector
             std::vector wrapper with basic std::map interface
@@ -97,20 +97,28 @@ public:
 
 template<class T, int len>
 class Vec{
-    T ar[len];
+    array<T, len> ar;
     int s = 0;
 public:
+	Vec(initializer_list<T> il) { copy(il.begin(), il.end(), ar.begin()); s = il.size(); }
+	Vec() {}
     void push_back(const T& x){ ar[s++] = x; }
     void pop_back(){ s--; }
     template<typename... Args> void emplace_back(Args... args){ ar[s++] = T(args...); }
     void clear(){ s = 0; }
-    T* begin(){ return ar; }
-    T* end(){ return ar+s; }
-    const T* begin() const { return ar; }
-    const T* end() const { return ar+s; }
+    T* begin(){ return ar.begin(); }
+    T* end(){ return ar.begin()+s; }
+    const T* begin() const { return ar.begin(); }
+    const T* end() const { return ar.begin()+s; }
     int size() const { return s; }
+	bool empty() const { return !s; }
     T& operator[](int i){ return ar[i]; }
+    T operator[](int i)const{ return ar[i]; }
     void reserve(int x){ assert(x <= len); }
+    friend operator<(const Vec<T, len>& a, const Vec<T, len>& b){
+        for(ll i = 0; i < min(a.size(), b.size()); i++) if (a[i] != b[i]) return a[i] < b[i];
+        return a.size() < b.size();
+    }
 };
 
 template<class K, class V>
