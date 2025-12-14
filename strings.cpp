@@ -53,7 +53,7 @@ public:
         }
     }
     void print(int v=0, string s=""){
-        dbg(v, s, t[v].sufflink)
+        dbg(v, s, t[v].sufflink);
         for(auto [c, nex] : t[v].next) print(nex, s + (char)c);
     }
     int next(int v, char c){
