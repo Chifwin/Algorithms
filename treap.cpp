@@ -27,7 +27,6 @@ class Treap{
         t[v].val.merge(tag, 1);
         t[v].sub.merge(tag, t[v].size);
     }
-    template<typename=decltype(declval<Node>().rev)>
     void apply_rev(int v){
         t[v].rev ^= 1;
         t[v].sub.rev();
@@ -98,25 +97,17 @@ public:
         t.emplace_back(val);
         return t.size()-1;
     }
-    void new_nodel(int& v, Info val){
-        v = merge(v, new_node(Val));
-    }
+    void new_nodel(int& v, Info val){ v = merge(v, new_node(Val)); }
     Info get(int& v, int l, int r){
         Info res;
-        v = apply(v, l, r, [&](int root){
-            res = t[root].sub;
-        });
+        v = apply(v, l, r, [&](int root){ res = t[root].sub; });
         return res;
     }
     void rev(int& v, int l, int r){
-        v = apply(v, l, r, [&](int root){
-            apply_rev(root);
-        });
+        v = apply(v, l, r, [&](int root){ apply_rev(root); });
     }
     void update(int& v, int l, int r, Tag t){
-        v = apply(v, l, r, [&](int root){
-            apply_upd(root, t);
-        });
+        v = apply(v, l, r, [&](int root){ apply_upd(root, t); });
     }
     void print(int root){
         if (root == -1) return;
@@ -129,22 +120,15 @@ public:
 
 struct Tag{
     Tag() {}
-    bool empty(){ return false; }
 };
 struct Info{
     Info() {}
-    void merge(Tag tag, [[maybe_unused]] ll len){
-    }
-    void rev(){
-    }
+    void merge(Tag tag, ll len){}
+    void rev(){}
     string to_string(){
         stringstream cout;
         return "[" +  cout.str() + "]";
     }
 };
-Info operator+(Info l, Info r){
-    return l;
-}
-Tag& operator+=(Tag &l, Tag r) {
-    return l;
-}
+Info operator+(Info l, Info r){ return l; }
+Tag& operator+=(Tag &l, Tag r) { return l; }

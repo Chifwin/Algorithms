@@ -38,9 +38,9 @@ using pll = pair<ll,ll>;
 template<class T> istream& operator>>(istream& in, vector<T>& x){for(T& i : x) in >> i; return in; }
 template<class T, class TT> istream& operator>>(istream& in, pair<T, TT>& x){ in >> x.f >> x.s; return in; }
 
-template <typename Iter, typename, typename> ostream& operator<<(ostream& out, const Iter& x);
+template <typename T, typename, typename> ostream& operator<<(ostream& out, const T& x);
 template<class T, class TT> ostream& operator<<(ostream& out, const pair<T, TT>& x){ out << x.f << ' ' << x.s; return out; }
-template <typename Iter, typename=decltype(declval<Iter>().begin()), typename=enable_if_t<!is_convertible_v<Iter, string>>> ostream& operator<<(ostream& out, const Iter& x){ for (const auto& i : x) out << i << ' '; return out;}
+template <typename T, typename=decltype(declval<T>().begin()), typename=enable_if_t<!is_convertible_v<T, string_view>>> ostream& operator<<(ostream& out, const T& x){ for (const auto& i : x) out << i << ' '; return out;}
 
 template<class Tuple, size_t... I> void dbg_vals(const Tuple& t, index_sequence<I...>){ auto sep=""; ((cerr<<sep<<"\033[31m"<<get<I>(t)<<"\033[0m", sep=" | "),...); }
 
