@@ -33,7 +33,7 @@ using pll = pair<ll,ll>;
 #define pb push_back
 #define all(queries) begin(queries),end(queries)
 #define rall(queries) (queries).rbegin(),(queries).rend()
-#define dbg(...) do {auto __dbg_tuple = std::make_tuple(__VA_ARGS__); cerr << "\033[33m" << (#__VA_ARGS__) << ": "; dbg_vals(__dbg_tuple, make_index_sequence<tuple_size_v<decltype(__dbg_tuple)>>{}); cerr << "\033[0m\n";}while(0)
+#define dbg(...) do {auto __dbg_tuple = std::make_tuple(__VA_ARGS__); cerr << "\033[33m" << (#__VA_ARGS__) << ": "; dbg_vals(__dbg_tuple, make_index_sequence<tuple_size_v<decltype(__dbg_tuple)>>{}); cerr << "\033[0m\n";}while(0);
 
 template<class T> istream& operator>>(istream& in, vector<T>& x){for(T& i : x) in >> i; return in; }
 template<class T, class TT> istream& operator>>(istream& in, pair<T, TT>& x){ in >> x.f >> x.s; return in; }

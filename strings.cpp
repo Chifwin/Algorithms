@@ -15,7 +15,7 @@
     StringHash:
         Rolling hash for strings
     
-    SuffixArray:
+    SuffixArray: (existing impl, here for the sake of completeness)
         Computes Suffix array and Longest common prefix of suffixes in O(n*log(n))
         Example:
             https://vjudge.net/solution/61252382
