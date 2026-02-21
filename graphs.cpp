@@ -7,9 +7,9 @@
         Edges are numerated from 0 in order of addition
         Undirected graph: 
             https://codeforces.com/contest/1981/submission/264060798
-            https://judge.yosupo.jp/submission/212822
-        Directed graph: 
             https://judge.yosupo.jp/submission/212823
+        Directed graph: 
+            https://judge.yosupo.jp/submission/212822
     
     matching_bipartite:
         Find maximal matching in bipartite graph.
