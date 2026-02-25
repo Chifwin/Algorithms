@@ -24,6 +24,10 @@
             1) assign(l, r, val): set 'val' on array [l, r)
                 At most one O(log) operation + amortized O(1) // it was insanely hard
             2) get value in point l in O(log)
+    Primes:
+        Prime factorization, Sieve of Eratosthenes
+        Example:
+            https://codeforces.com/contest/2203/submission/364364566
 */
 
 template<int H, class Info, class bit_type=unsigned long long>
@@ -250,3 +254,45 @@ public:
         return (--it)->second;
 	}
 };
+
+struct Primes{
+    vector<int> sieve, primes;
+    Primes(int x){
+        sieve.resize(x);
+        iota(all(sieve), 0);
+        primes.reserve(x/10);
+        for(long long i = 2; i < sz(sieve); i++){
+            if (sieve[i] == i){
+                primes.push_back(i);
+                for(long long j = i*i; j < sz(sieve); j += i) sieve[j] = i;
+            }
+        }
+    }
+    const vector<int>& operator()(){
+        return primes;
+    }
+    map<int,int> operator()(ll x){
+        if (!x) return {};
+        map<int,int> mp;
+        if (x >= sz(sieve)) for(int i : primes) while(x%i == 0 && x < sz(sieve)) mp[i]++, x /= i;
+        while(x > 1) {
+            mp[sieve[x]]++;
+            x /= sieve[x];
+        }
+        return mp;
+    }
+    bool is_prime(ll x){
+        if (x < sz(sieve)) return sieve[x] == x;
+        for(ll i : primes) if (x%i == 0) return false;
+        return true;
+    }
+    template<class Iter> static vector<int> divisors_by_fact(const Iter& primes){
+        int need = 1;
+        for(auto [p, c] : primes) need *= c;
+        vector<int> ans{1}; ans.reserve(need+5);
+        for(auto [p, c] : primes) // {prime, its_power}
+            for(int _ = 1, n = sz(ans), d = p; _ <= c; _++, d *= p)
+                fi(n) ans.pb(ans[i]*d);
+        return ans;
+    }
+} primes(MAXN);
