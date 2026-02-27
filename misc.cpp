@@ -257,8 +257,7 @@ public:
 
 struct Primes{
     vector<int> sieve, primes;
-    Primes(int x){
-        sieve.resize(x);
+    Primes(int x): sieve(x){
         iota(all(sieve), 0);
         primes.reserve(x/10);
         for(long long i = 2; i < sz(sieve); i++){
@@ -271,11 +270,12 @@ struct Primes{
     const vector<int>& operator()(){
         return primes;
     }
-    map<int,int> operator()(ll x){
+    map<ll,int> operator()(ll x){
         if (!x) return {};
-        map<int,int> mp;
-        if (x >= sz(sieve)) for(int i : primes) while(x%i == 0 && x < sz(sieve)) mp[i]++, x /= i;
-        while(x > 1) {
+        map<ll,int> mp;
+        if (x >= sz(sieve)) for(int i : primes) while(x%i == 0 && x >= sz(sieve)) mp[i]++, x /= i;
+        if (x >= sz(sieve)) mp[x]++;
+        else while(x > 1) {
             mp[sieve[x]]++;
             x /= sieve[x];
         }
@@ -283,15 +283,15 @@ struct Primes{
     }
     bool is_prime(ll x){
         if (x < sz(sieve)) return sieve[x] == x;
-        for(ll i : primes) if (x%i == 0) return false;
+        for(int i : primes) if (x%i == 0) return false;
         return true;
     }
-    template<class Iter> static vector<int> divisors_by_fact(const Iter& primes){
+    template<class Iter> static vector<ll> divisors_by_fact(const Iter& primes){
         int need = 1;
         for(auto [p, c] : primes) need *= c;
-        vector<int> ans{1}; ans.reserve(need+5);
+        vector<ll> ans{1}; ans.reserve(need+5);
         for(auto [p, c] : primes) // {prime, its_power}
-            for(int _ = 1, n = sz(ans), d = p; _ <= c; _++, d *= p)
+            for(ll _ = 1, n = sz(ans), d = p; _ <= c; _++, d *= p)
                 fi(n) ans.pb(ans[i]*d);
         return ans;
     }
