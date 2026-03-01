@@ -14,6 +14,10 @@
 
     StringHash:
         Rolling hash for strings
+
+    prefix_function
+        Example:
+            https://codeforces.com/contest/2205/submission/364940721 n=(8000^2)/2 in 200ms
     
     SuffixArray: (existing impl, here for the sake of completeness)
         Computes Suffix array and Longest common prefix of suffixes in O(n*log(n))
@@ -84,6 +88,17 @@ public:
     int get(int pos, bool odl=true){ return (odl ? d1[pos*2]+1 : d1[pos*2+1])/2; }
     bool is_pal(int l, int r){ int len = r - l + 1; return get((l+r)>>1, len&1)*2 >= len;}
 };
+
+template<class T>
+vector<int> prefix_function(const T& s) {
+    vector<int> pi(s.size());
+    for (size_t i = 1; i < s.size(); i++) {
+        int j = pi[i-1];
+        while (j > 0 && s[i] != s[j]) j = pi[j-1];
+        pi[i] = j + (s[i] == s[j]);
+    }
+    return pi;
+}
 
 template<int mod=1000'000'007, int k=7877>
 class StringHash{
