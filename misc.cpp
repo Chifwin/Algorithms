@@ -296,3 +296,28 @@ struct Primes{
         return ans;
     }
 } primes(MAXN);
+
+class FenTree{
+    int n, pw;
+    vll fen;
+public:
+    FenTree(int _n){ init(_n); }
+    void init(int _n){ n = _n; fen.assign(n, 0); while((pw<<1) <= n) pw <<= 1; }
+    void update(int i, ll num){ for(i >= 0 ? 0 : i=n; i < n; i |= i+1) fen[i] += num; }
+    ll get(int r){
+        ll ans = 0;
+        for(r >= n ? r=n-1 : r; r >= 0; r = (r & (r+1))-1) ans += fen[r];
+        return ans;
+    }
+    ll get(int l, int r){ return get(r) - get(l-1); }
+    int kth(ll k){ // leftmost r such that get(r) >= k
+        int pos = -1;
+        for(int p = pw; p; p >>= 1) if (int nxt = pos + p; nxt < n && fen[nxt] < k) k -= fen[pos = nxt];
+        return pos+1;
+        return (k <= 0 ? pos+1 : -1);
+    }
+    array<ll, 3> lr(int pos){
+        ll l = get(pos-1), m = get(pos), total = get(n-1);
+        return {(l ? kth(l) : -1), (m != total ? kth(m+1) : -1), m - l};
+    }
+};
