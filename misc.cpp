@@ -28,6 +28,12 @@
         Prime factorization, Sieve of Eratosthenes
         Example:
             https://codeforces.com/contest/2203/submission/364364566
+    FenTree:
+        Fenwick tree (0-based)
+    Bitset:
+        Bitset with support of find left/right 1 from position
+    LeveledBitset:
+        Bitset with support of find left/right 1 from position in O(N / (64 ^ level)) - practically O(1)
 */
 
 template<int H, class Info, class bit_type=unsigned long long>
@@ -320,4 +326,119 @@ public:
         ll l = get(pos-1), m = get(pos), total = get(n-1);
         return {(l ? kth(l) : -1), (m != total ? kth(m+1) : -1), m - l};
     }
+};
+
+template<int N, typename array_type=unsigned long long>
+class Bitset{
+public:
+    constexpr static int _WS = sizeof(array_type) * 8;
+private:
+    constexpr static int n  = (N + _WS - 1) / _WS;
+    array<array_type, n> ar{};
+    constexpr static array_type _get_bit(int p, bool v){ return array_type(v) << p; }
+    constexpr static int _lowest_bit(array_type v){ return (v ? countr_zero(v) : -1); }
+    constexpr static int _highest_bit(array_type v){ return (v ? _WS - countl_zero(v) - 1 : -1); }
+    constexpr static array_type _low_mask(int p) { return p >= 0 ? (p >= _WS ? ~array_type(0) : _get_bit(p, 1)-1) : 0; }
+public:
+    bool operator[](int pos) const { return (ar[pos / _WS] >> (pos % _WS)) & 1; }
+    int set(int pos, bool val=1){
+        int b = pos / _WS, p = pos % _WS;
+        int was = (ar[b] >> p) & 1;
+        ar[b] = (ar[b] & ~_get_bit(p, 1)) | _get_bit(p, val);
+        return val - was; // diff
+    }
+    int _find_next_in_word(int pos) const { // >= pos
+        if (pos >= N) return -1;
+        int b = pos / _WS, p = pos % _WS;
+        if (int lp = _lowest_bit(ar[b] & ~_low_mask(p)); lp != -1) 
+            return b*_WS + lp;
+        return -1;
+    }
+    int find_next(int pos) const { // >= pos
+        if (pos >= N) return -1;
+        if (int res = _find_next_in_word(pos); res != -1) return res;
+        for (int b = pos / _WS + 1; b < n; b++){
+            if (ar[b] == 0) continue;
+            return b*_WS + _lowest_bit(ar[b]);
+        }
+        return -1;
+    }
+    int _find_prev_in_word(int pos) const { // <= pos
+        if (pos < 0) return -1;
+        int b = pos / _WS, p = pos % _WS;
+        if (int lp = _highest_bit(ar[b] & _low_mask(p+1)); lp != -1) 
+            return b*_WS + lp;
+        return -1;
+    }
+    int find_prev(int pos) const { // <= pos
+        if (pos < 0) return -1;
+        if (int res = _find_prev_in_word(pos); res != -1) return res;
+        for (int b = pos / _WS - 1; b >= 0; b--){
+            if (ar[b] == 0) continue;
+            return b*_WS + _highest_bit(ar[b]);
+        }
+        return -1;
+    }
+    string to_string() const {
+        string s(N, '0');
+        for(int i = 0; i < N; i++) s[i] = this->operator[](i) + '0';
+        return s;
+    }
+    int size() const { return N; }
+    void clear(){ ar.fill(0); }
+};
+
+template<int level, int N, typename array_type=unsigned long long>
+class LeveledBitset{
+    using lower_type = LeveledBitset<level-1, N, array_type>;
+    lower_type lower;
+public:
+    constexpr static int _WS = lower_type::_WS;
+    constexpr static int _BS = lower_type::_WS * lower_type::_BS;
+    constexpr static int _LBS = lower_type::_BS;
+private:
+    constexpr static int cur_len = (N + _LBS - 1) / _LBS;
+    Bitset<cur_len, array_type> cur;
+    array<char, cur_len> cur_cnt{};
+    template<bool in_word>
+    int _find_next_helper(int pos) const {
+        if (pos >= N) return -1;
+        if (int res = lower._find_next_in_word(pos); res != -1) return res;
+        int p = (in_word ? cur._find_next_in_word(pos / _LBS + 1) : cur.find_next(pos / _LBS + 1));
+        return (p != -1 ? lower._find_next_in_word(p * _LBS) : -1);
+    }
+    template<bool in_word>
+    int _find_prev_helper(int pos) const {
+        if (pos < 0) return -1;
+        if (int res = lower._find_prev_in_word(pos); res != -1) return res;
+        int p = (in_word ? cur._find_prev_in_word(pos / _LBS - 1) : cur.find_prev(pos / _LBS - 1));
+        return (p != -1 ? lower._find_prev_in_word((p + 1) * _LBS - 1) : -1);
+    }
+public:
+    bool operator[](int pos) const { return lower[pos]; }
+    int set(int pos, bool val=1){
+        int b = pos / _LBS, was = !!cur_cnt[b];
+        cur_cnt[b] -= lower.set(pos, val);
+        cur.set(b, !!cur_cnt[b]);
+        return !!cur_cnt[b] - was;
+    }
+    int _find_next_in_word(int pos) const { return _find_next_helper<1>(pos); }
+    int _find_prev_in_word(int pos) const { return _find_prev_helper<1>(pos); }
+    int find_next(int pos) const { return _find_next_helper<0>(pos); }
+    int find_prev(int pos) const { return _find_prev_helper<0>(pos); }
+    void print() const { 
+        lower.print();
+        string s(N, ' ');
+        for(int i = 0; i < cur.size(); i++) s[i*_LBS] = cur[i] + '0';
+        dbg(level, s)
+    }
+    int size() const { return N; }
+    void clear() { cur.clear(); cur_cnt.fill(0); lower.clear(); }
+};
+
+template<int N, typename array_type>
+class LeveledBitset<0, N, array_type>: public Bitset<N, array_type>{
+public:
+    constexpr static int _BS = Bitset<N, array_type>::_WS;
+    void print() const { string s = this->to_string(); dbg(00000, s) }
 };
