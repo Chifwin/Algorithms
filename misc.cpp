@@ -341,11 +341,9 @@ private:
     constexpr static array_type _low_mask(int p) { return p >= 0 ? (p >= _WS ? ~array_type(0) : _get_bit(p, 1)-1) : 0; }
 public:
     bool operator[](int pos) const { return (ar[pos / _WS] >> (pos % _WS)) & 1; }
-    int set(int pos, bool val=1){
+    void set(int pos, bool val=1){
         int b = pos / _WS, p = pos % _WS;
-        int was = (ar[b] >> p) & 1;
         ar[b] = (ar[b] & ~_get_bit(p, 1)) | _get_bit(p, val);
-        return val - was; // diff
     }
     int _find_next_in_word(int pos) const { // >= pos
         if (pos >= N) return -1;
@@ -386,6 +384,7 @@ public:
     }
     int size() const { return N; }
     void clear(){ ar.fill(0); }
+    bool any_in_word(int pos) const { return !!ar[pos/_WS]; }
 };
 
 template<int level, int N, typename array_type=unsigned long long>
@@ -399,7 +398,6 @@ public:
 private:
     constexpr static int cur_len = (N + _LBS - 1) / _LBS;
     Bitset<cur_len, array_type> cur;
-    array<char, cur_len> cur_cnt{};
     template<bool in_word>
     int _find_next_helper(int pos) const {
         if (pos >= N) return -1;
@@ -416,11 +414,9 @@ private:
     }
 public:
     bool operator[](int pos) const { return lower[pos]; }
-    int set(int pos, bool val=1){
-        int b = pos / _LBS, was = !!cur_cnt[b];
-        cur_cnt[b] -= lower.set(pos, val);
-        cur.set(b, !!cur_cnt[b]);
-        return !!cur_cnt[b] - was;
+    void set(int pos, bool val=1){
+        lower.set(pos, val);
+        cur.set(pos / _LBS, lower.any_in_word(pos));
     }
     int _find_next_in_word(int pos) const { return _find_next_helper<1>(pos); }
     int _find_prev_in_word(int pos) const { return _find_prev_helper<1>(pos); }
@@ -433,7 +429,8 @@ public:
         dbg(level, s)
     }
     int size() const { return N; }
-    void clear() { cur.clear(); cur_cnt.fill(0); lower.clear(); }
+    void clear() { cur.clear(); lower.clear(); }
+    bool any_in_word(int pos) const { return cur.any_in_word(pos / _LBS); }
 };
 
 template<int N, typename array_type>
